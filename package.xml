@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>scheduler_node</name>
+  <version>0.1.0</version>
+  <description>Scheduler node for ROS 2 automation, storing schedules as ROS parameters.</description>
+  <maintainer email="user@example.com">User</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

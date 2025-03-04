@@ -1,0 +1,26 @@
+/**:
+  ros__parameters:
+    schedules:
+      - receiver_id: "light_1"
+        action: "ON"
+        schedule: "09:00"
+
+      - receiver_id: "light_1"
+        action: "OFF"
+        schedule: "17:00"
+
+      - receiver_id: "light_2"
+        action: "ON"
+        schedule: "every 1 minute"
+
+      - receiver_id: "light_2"
+        action: "OFF"
+        schedule: "every 1 minute after 10 seconds"
+
+      - receiver_id: "irrigation_1"
+        action: "ON"
+        schedule: "08:00"
+
+      - receiver_id: "irrigation_1"
+        action: "OFF"
+        schedule: "08:10"
