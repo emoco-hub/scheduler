@@ -1,0 +1,143 @@
+# Scheduler Configuration Example
+# ================================
+# This file demonstrates all scheduling capabilities of the scheduler node.
+
+# Location settings for sunrise/sunset calculations
+location:
+  latitude: 59.3293      # Stockholm
+  longitude: 18.0686
+  timezone: Europe/Stockholm
+
+# List of relay namespaces to monitor/control
+# The scheduler will automatically subscribe to state topics and create
+# publishers for controlling each relay listed here or referenced in schedules
+relays:
+  - /livingroom/lamp
+  - /porch/lights
+  - /kitchen/lights
+  - /hallway/main_switch
+  - /garage/ventilation
+
+# Schedule rules
+schedules:
+  # -------------------------------------------------------------------------
+  # TIME-BASED SCHEDULES
+  # -------------------------------------------------------------------------
+
+  # Turn on living room lamp at 7:00 AM on weekdays
+  - name: "Morning lamp on"
+    trigger: time
+    time: "08:00"
+    days: [0, 1, 2, 3, 4]  # Monday=0 through Friday=4
+    relays:
+      - /livingroom/lamp
+    action: close  # close = turn ON
+    enabled: true
+
+  # Turn off living room lamp at 9:00 AM on weekdays
+  - name: "Morning lamp off"
+    trigger: time
+    time: "10:00"
+    days: [0, 1, 2, 3, 4]
+    relays:
+      - /livingroom/lamp
+    action: open  # open = turn OFF
+    enabled: true
+
+  # Turn on garage ventilation during work hours
+  - name: "Garage ventilation on"
+    trigger: time
+    time: "08:00"
+    days: [0, 1, 2, 3, 4]
+    relays:
+      - /garage/ventilation
+    action: close
+    enabled: true
+
+  # Turn off garage ventilation at end of work day
+  - name: "Garage ventilation off"
+    trigger: time
+    time: "17:00"
+    days: [0, 1, 2, 3, 4]
+    relays:
+      - /garage/ventilation
+    action: open
+    enabled: true
+
+  # Weekend schedule - later start time
+  - name: "Weekend lamp on"
+    trigger: time
+    time: "09:00"
+    days: [5, 6]  # Saturday=5, Sunday=6
+    relays:
+      - /livingroom/lamp
+    action: close
+    enabled: true
+
+  # -------------------------------------------------------------------------
+  # SUNRISE/SUNSET SCHEDULES
+  # -------------------------------------------------------------------------
+
+  # Turn on living room lamp 30 minutes before sunset
+  - name: "Evening lamp on"
+    trigger: sunset
+    offset_minutes: -30  # 30 minutes BEFORE sunset
+    days: [0, 1, 2, 3, 4, 5, 6]  # Every day
+    relays:
+      - /livingroom/lamp
+    action: close
+    enabled: true
+
+  # Turn off living room lamp at sunrise
+  - name: "Morning lamp off at sunrise"
+    trigger: sunrise
+    offset_minutes: 0
+    days: [0, 1, 2, 3, 4, 5, 6]
+    relays:
+      - /livingroom/lamp
+    action: open
+    enabled: true
+
+  # Turn on porch lights 15 minutes after sunset
+  - name: "Porch lights on"
+    trigger: sunset
+    offset_minutes: 15
+    relays:
+      - /porch/lights
+    action: close
+    enabled: false  # Disabled by default
+
+  # Turn off porch lights at sunrise
+  - name: "Porch lights off"
+    trigger: sunrise
+    offset_minutes: 0
+    relays:
+      - /porch/lights
+    action: open
+    enabled: false
+
+  # -------------------------------------------------------------------------
+  # FOLLOW RULES (Master/Slave control)
+  # -------------------------------------------------------------------------
+  # The "follow" trigger type makes relays mirror another relay's state.
+  # Slaves automatically follow the source - no need for separate ON/OFF rules.
+
+  # Hallway switch controls living room lamp
+  # When hallway switch closes, lamp closes. When it opens, lamp opens.
+  - name: "Hallway controls lamp"
+    trigger: follow
+    source_relay: /hallway/main_switch
+    relays:
+      - /livingroom/lamp
+    enabled: false  # Disabled - enable to use master/slave
+
+  # Master switch controls all lights
+  # All listed relays will mirror the state of the hallway switch
+  - name: "Master switch controls all"
+    trigger: follow
+    source_relay: /hallway/main_switch
+    relays:
+      - /livingroom/lamp
+      - /kitchen/lights
+      - /porch/lights
+    enabled: false
